@@ -3,5 +3,9 @@ require_relative 'errors'
 require 'csv'
 
 class Udacidata
-  # Your code goes here!
+
+  def self.create(opts)
+    
+  end
+
 end
