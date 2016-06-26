@@ -4,7 +4,6 @@ class Product < Udacidata
   attr_reader :id, :price, :brand, :name
 
   def initialize(opts={})
-
     # Get last ID from the database if ID exists
     get_last_id
     # Set the ID if it was passed in, otherwise use last existing ID
@@ -15,6 +14,21 @@ class Product < Udacidata
     @brand = opts[:brand]
     @name = opts[:name]
     @price = opts[:price]
+  end
+
+  def self.all
+    product = []
+    CSV.foreach(Udacidata.data_path,{headers: true, return_headers: false}) do |row|
+      new_product = Product.new({id:row[0],brand:row[1],product:row[2],price:row[3]})
+      product << new_product
+    end
+    return product
+  end
+
+  def self.first
+    faster_csv = CSV.open(Udacidata.data_path,{headers: true, return_headers: false})
+    info = faster_csv.first
+    product = Product.new({id: info[0],brand: info[1], product: info[2], price: info[3] })
   end
 
   private
