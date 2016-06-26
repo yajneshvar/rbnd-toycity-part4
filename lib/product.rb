@@ -25,10 +25,19 @@ class Product < Udacidata
     return product
   end
 
-  def self.first
+  def self.first(count=1)
     faster_csv = CSV.open(Udacidata.data_path,{headers: true, return_headers: false})
-    info = faster_csv.first
-    product = Product.new({id: info[0],brand: info[1], product: info[2], price: info[3] })
+    info = faster_csv.first(count)
+    puts info
+    if(count == 1)
+      return Product.new({id: info[0],brand: info[1], product: info[2], price: info[3] })
+    else
+      product = []
+      info.each do |attr|
+        product << Product.new({id: attr[0],brand: attr[1], product: attr[2], price: attr[3] })
+      end
+      return product
+    end
   end
 
   private
