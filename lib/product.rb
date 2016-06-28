@@ -26,19 +26,49 @@ class Product < Udacidata
   end
 
   def self.first(count=1)
-    faster_csv = CSV.open(Udacidata.data_path,{headers: true, return_headers: false})
+    faster_csv = read_csv
+    info = faster_csv.first(count)
     if(count == 1)
-      info = faster_csv.first
-      prod = Product.new({id: info[0],brand: info[1], product: info[2], price: info[3] })
+      prod = Product.new({id: info[0][0],brand: info[0][1], product: info[0][2], price: info[0][3] })
       return prod
     else
-      info = faster_csv.first(count)
       product = []
       info.each do |attr|
         product << Product.new({id: attr[0],brand: attr[1], product: attr[2], price: attr[3] })
       end
       return product
     end
+  end
+
+  def self.last(count=1)
+    faster_csv = read_csv
+    info = faster_csv.reverse_each.first(count)
+    if(count == 1)
+      prod = Product.new({id: info[0][0],brand: info[0][1], product: info[0][2], price: info[0][3] })
+      return prod
+    else
+      product = []
+      info.each do |attr|
+        product << Product.new({id: attr[0],brand: attr[1], product: attr[2], price: attr[3] })
+      end
+      return product
+    end
+  end
+
+  def self.find(id)
+    faster_csv = read_csv
+    matched_product = faster_csv.find do |product|
+                        product_ary = product.to_a
+                        puts "Comparing #{product.fetch("id")} & #{id}"
+                        puts product.fetch("id") == id
+                      end
+    if matched_product.nil?
+      puts "Its is empty"
+    end
+  end
+
+  def self.read_csv
+    CSV.open(Udacidata.data_path,{headers: true, return_headers: false, converters: :numeric})
   end
 
   private
@@ -55,5 +85,6 @@ class Product < Udacidata
     def auto_increment
       @@count_class_instances += 1
     end
+
 
 end

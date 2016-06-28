@@ -6,8 +6,8 @@ require 'faker'
 def db_seed
   @data_path = File.dirname(__FILE__) + "/../data/data.csv"
   CSV.open(@data_path, "ab") do |csv|
-    10.times do
-      csv << [Faker::Number.digit, Faker::Commerce.department, Faker::Commerce.product_name, Faker::Commerce.price]
+    10.times do |i|
+      csv << [i, Faker::Commerce.department, Faker::Commerce.product_name, Faker::Commerce.price]
     end
   end
 end
