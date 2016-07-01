@@ -57,14 +57,11 @@ class Product < Udacidata
 
   def self.find(id)
     faster_csv = read_csv
-    matched_product = faster_csv.find do |product|
-                        product_ary = product.to_a
-                        puts "Comparing #{product.fetch("id")} & #{id}"
-                        puts product.fetch("id") == id
+    prod = faster_csv.find do |product|
+                        product.fetch("id") == id
                       end
-    if matched_product.nil?
-      puts "Its is empty"
-    end
+    product = Product.new({id: prod.fetch("id"),brand: prod.fetch("brand"), product: prod.fetch("product"), price: prod.fetch("product")})
+    #build the product
   end
 
   def self.read_csv
