@@ -61,11 +61,26 @@ class Product < Udacidata
                         product.fetch("id") == id
                       end
     product = Product.new({id: prod.fetch("id"),brand: prod.fetch("brand"), product: prod.fetch("product"), price: prod.fetch("product")})
-    #build the product
   end
 
+  def self.destroy(id)
+    faster_csv = read_csv
+    table = CSV::Table.new(faster_csv)
+    deleted_prod = nil
+    table.delete_if do |product|
+      if(product.fetch("id") == id)
+        deleted_prod = Product.new({id: product.fetch("id"),brand: product.fetch("brand"), product: product.fetch("product"), price: product.fetch("product")})
+      end
+    end
+    File.open(Udacidata.data_path,'w') do |file|
+      file.write(faster_csv.to_csv)
+    end
+    return deleted_prod
+  end
+
+
   def self.read_csv
-    CSV.open(Udacidata.data_path,{headers: true, return_headers: false, converters: :numeric})
+    CSV.read(Udacidata.data_path,{headers: true, return_headers: false, converters: :numeric})
   end
 
   private
