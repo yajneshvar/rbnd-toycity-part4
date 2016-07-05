@@ -2,6 +2,7 @@ require_relative 'udacidata'
 
 class Product < Udacidata
   attr_reader :id, :price, :brand, :name
+  create_finder_methods :id, :price, :brand, :name
 
   def initialize(opts={})
     # Get last ID from the database if ID exists
@@ -19,7 +20,7 @@ class Product < Udacidata
   def self.all
     product = []
     CSV.foreach(Udacidata.data_path,{headers: true, return_headers: false}) do |row|
-      new_product = Product.new({id:row[0],brand:row[1],product:row[2],price:row[3]})
+      new_product = Product.new({id:row[0],brand:row[1],name:row[2],price:row[3]})
       product << new_product
     end
     return product
@@ -29,12 +30,12 @@ class Product < Udacidata
     faster_csv = read_csv
     info = faster_csv.first(count)
     if(count == 1)
-      prod = Product.new({id: info[0][0],brand: info[0][1], product: info[0][2], price: info[0][3] })
+      prod = Product.new({id: info[0][0],brand: info[0][1], name: info[0][2], price: info[0][3] })
       return prod
     else
       product = []
       info.each do |attr|
-        product << Product.new({id: attr[0],brand: attr[1], product: attr[2], price: attr[3] })
+        product << Product.new({id: attr[0],brand: attr[1], name: attr[2], price: attr[3] })
       end
       return product
     end
@@ -44,12 +45,12 @@ class Product < Udacidata
     faster_csv = read_csv
     info = faster_csv.reverse_each.first(count)
     if(count == 1)
-      prod = Product.new({id: info[0][0],brand: info[0][1], product: info[0][2], price: info[0][3] })
+      prod = Product.new({id: info[0][0],brand: info[0][1], name: info[0][2], price: info[0][3] })
       return prod
     else
       product = []
       info.each do |attr|
-        product << Product.new({id: attr[0],brand: attr[1], product: attr[2], price: attr[3] })
+        product << Product.new({id: attr[0],brand: attr[1], name: attr[2], price: attr[3] })
       end
       return product
     end
@@ -60,7 +61,7 @@ class Product < Udacidata
     prod = faster_csv.find do |product|
                         product.fetch("id") == id
                       end
-    product = Product.new({id: prod.fetch("id"),brand: prod.fetch("brand"), product: prod.fetch("product"), price: prod.fetch("product")})
+    product = Product.new({id: prod.fetch("id"),brand: prod.fetch("brand"), name: prod.fetch("product"), price: prod.fetch("price")})
   end
 
   def self.destroy(id)
@@ -69,7 +70,7 @@ class Product < Udacidata
     deleted_prod = nil
     table.delete_if do |product|
       if(product.fetch("id") == id)
-        deleted_prod = Product.new({id: product.fetch("id"),brand: product.fetch("brand"), product: product.fetch("product"), price: product.fetch("product")})
+        deleted_prod = Product.new({id: product.fetch("id"),brand: product.fetch("brand"), name: product.fetch("product"), price: product.fetch("price")})
       end
     end
     File.open(Udacidata.data_path,'w') do |file|
@@ -77,7 +78,6 @@ class Product < Udacidata
     end
     return deleted_prod
   end
-
 
   def self.read_csv
     CSV.read(Udacidata.data_path,{headers: true, return_headers: false, converters: :numeric})
