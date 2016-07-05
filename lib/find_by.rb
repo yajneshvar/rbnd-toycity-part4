@@ -7,7 +7,8 @@ class Module
         def find_by_#{attr}(val)
           faster_csv = Product.read_csv
           prod = faster_csv.find do |product|
-                    product.fetch("#{attr}") == val
+                    field = "#{attr}" == "name" ? "product" : "#{attr}" #hack since mismatch schema and function naming
+                    product.fetch(field) == val
                   end
           product = Product.new({id: prod.fetch("id"),brand: prod.fetch("brand"), name: prod.fetch("product"), price: prod.fetch("price")})
         end
