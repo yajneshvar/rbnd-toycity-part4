@@ -92,6 +92,13 @@ class Product < Udacidata
     return product
   end
 
+  def update(opts={})
+    deleted_prod = self.class.destroy(id)
+    old_data = {id: id, brand: deleted_prod.brand, name: deleted_prod.name, price: deleted_prod.price}
+    updated_data = old_data.merge(opts)
+    self.class.create(updated_data)
+  end
+
   def self.read_csv
     CSV.read(Udacidata.data_path,{headers: true, return_headers: false, converters: :numeric})
   end
