@@ -79,6 +79,19 @@ class Product < Udacidata
     return deleted_prod
   end
 
+
+  def self.where(opts={})
+    faster_csv = read_csv
+    prod = faster_csv.select do |product|
+                        product.fetch("brand") == opts[:brand] || product.fetch("product") == opts[:name]
+                      end
+    product = []
+    prod.each do |prod_info|
+      product << Product.new({id: prod_info.fetch("id"),brand: prod_info.fetch("brand"), name: prod_info.fetch("product"), price: prod_info.fetch("price")})
+    end
+    return product
+  end
+
   def self.read_csv
     CSV.read(Udacidata.data_path,{headers: true, return_headers: false, converters: :numeric})
   end
