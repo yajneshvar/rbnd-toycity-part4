@@ -61,6 +61,9 @@ class Product < Udacidata
     prod = faster_csv.find do |product|
                         product.fetch("id") == id
                       end
+    if(prod.nil?)
+      raise ProductNotFoundError, "Product with id #{id} not found"
+    end
     product = Product.new({id: prod.fetch("id"),brand: prod.fetch("brand"), name: prod.fetch("product"), price: prod.fetch("price")})
   end
 
@@ -72,6 +75,9 @@ class Product < Udacidata
       if(product.fetch("id") == id)
         deleted_prod = Product.new({id: product.fetch("id"),brand: product.fetch("brand"), name: product.fetch("product"), price: product.fetch("price")})
       end
+    end
+    if(deleted_prod.nil?)
+      raise ProductNotFoundError, "Product with id #{id} not found"
     end
     File.open(Udacidata.data_path,'w') do |file|
       file.write(faster_csv.to_csv)
