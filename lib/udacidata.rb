@@ -9,7 +9,7 @@ class Udacidata
   def self.create(opts)
     product = Product.new(opts)
     CSV.open(self.data_path, "ab") do |csv|
-      csv << [opts[:id],opts[:brand],opts[:name],opts[:price]]
+      csv << [product.id,product.brand,product.name,product.price]
     end
     product
   end
