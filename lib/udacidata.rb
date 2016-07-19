@@ -24,34 +24,11 @@ class Udacidata
   end
 
   def self.first(count=1)
-    faster_csv = read_csv
-    info = faster_csv.first(count)
-    if(count == 1)
-      prod = Product.new({id: info[0][0],brand: info[0][1], name: info[0][2], price: info[0][3] })
-      return prod
-    else
-      product = []
-      info.each do |attr|
-        product << Product.new({id: attr[0],brand: attr[1], name: attr[2], price: attr[3] })
-      end
-      return product
-    end
+    count > 1 ? all.take(count) : all.first
   end
 
-
   def self.last(count=1)
-    faster_csv = read_csv
-    info = faster_csv.reverse_each.first(count)
-    if(count == 1)
-      prod = Product.new({id: info[0][0],brand: info[0][1], name: info[0][2], price: info[0][3] })
-      return prod
-    else
-      product = []
-      info.each do |attr|
-        product << Product.new({id: attr[0],brand: attr[1], name: attr[2], price: attr[3] })
-      end
-      return product
-    end
+    count > 1 ? all.reverse.take(count) : all.reverse.first
   end
 
   def self.find(id)
@@ -66,16 +43,11 @@ class Udacidata
   end
 
   def self.destroy(id)
+    deleted_prod = find(id)
     faster_csv = read_csv
     table = CSV::Table.new(faster_csv)
-    deleted_prod = nil
     table.delete_if do |product|
-      if(product.fetch("id") == id)
-        deleted_prod = Product.new({id: product.fetch("id"),brand: product.fetch("brand"), name: product.fetch("product"), price: product.fetch("price")})
-      end
-    end
-    if(deleted_prod.nil?)
-      raise ProductNotFoundError, "Product with id #{id} not found"
+      product.fetch("id") == id
     end
     File.open(Udacidata.data_path,'w') do |file|
       file.write(faster_csv.to_csv)
