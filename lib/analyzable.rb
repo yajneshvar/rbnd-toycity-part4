@@ -1,38 +1,19 @@
 module Analyzable
   # Your code goes here!
   def average_price(products)
-    total_price = 0
-    products.each do |product|
-      total_price = total_price + product.price.to_f
-    end
-    (total_price/products.length).round(2)
+    (products.inject(0) {|sum, product| sum + product.price.to_f}/products.size).round(2)
   end
 
-  def count_by_brand(products)
-    hash = {}
-    products.each do |product|
-      if(hash.has_key?(product.brand))
-        hash[product.brand] += 1
-      else
-        hash.store(product.brand,1)
+  [:brand, :name].each do |field|
+      send(:define_method, "count_by_#{field}") do |products|
+        sums = Hash.new(0)
+        products.each do |product|
+          value = product.send(field)
+          sums[value] += 1
+        end
+        sums
       end
     end
-    return hash
-  end
-
-
-  def count_by_name(products)
-    hash = {}
-    products.each do |product|
-      if(hash.has_key?(product.name))
-        hash[product.name] += 1
-      else
-        hash.store(product.name,1)
-      end
-    end
-    return hash
-  end
-
 
   def print_report(products)
     avg_price = average_price(products)
